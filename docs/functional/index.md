@@ -23,3 +23,9 @@ This registry tracks the active business and functional capabilities of the Spri
 - **User Stories**:
   - **US01: Book Vet Appointment (Owner Flow)** (Estimate: 3 SP) [🟢 Implemented & Packaged] -> [02_story_details.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F01/user-stories/US01/02_story_details.md)
   - **US02: Veterinarian Appointment Dashboard & Management (Vet Flow)** (Estimate: 2 SP) -> [02_story_details.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F01/user-stories/US02/02_story_details.md)
+
+### 5. Pet Medical Records, Prescriptions & Vaccinations (F02)
+- **Description**: Enables recording clinical diagnoses, medication prescriptions, and tracking vaccinations with reminders.
+- **Status**: Designed (Specifications ready).
+- **Design Spec**: [01_feature_design.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F02/01_feature_design.md)
+
