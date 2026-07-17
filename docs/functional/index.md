@@ -29,3 +29,14 @@ This registry tracks the active business and functional capabilities of the Spri
 - **Status**: Designed (Specifications ready).
 - **Design Spec**: [01_feature_design.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F02/01_feature_design.md)
 
+### 6. Clinic Billing & Invoicing (F03)
+- **Description**: Enables receptionist/staff to generate invoices for clinic visits or appointments, and allows pet owners to pay invoices online.
+- **Status**: Designed (Specifications & User Stories ready).
+- **Epic Spec**: [00_epic_spec.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/epics/EPIC-03/00_epic_spec.md)
+- **Design Spec**: [01_feature_design.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F03/01_feature_design.md)
+- **User Stories**:
+  - **US01: Invoice Generation & Management (Staff Flow)** (Estimate: 3 SP) -> [02_story_details.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F03/user-stories/US01/02_story_details.md)
+  - **US02: View & Pay Invoices (Owner Flow)** (Estimate: 5 SP) -> [02_story_details.md](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F03/user-stories/US02/02_story_details.md)
+
+
+

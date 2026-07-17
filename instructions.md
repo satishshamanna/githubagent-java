@@ -81,11 +81,12 @@ All code must be written in Java (for backend controllers, services, database mo
 
 ---
 
-## Rule 3: Strict Testing & Coverage
+## Rule 3: Strict Testing, Coverage, & Regression Testing
 Every Java source class containing business logic must have a corresponding JUnit test class in `src/test/java/`.
 - Target at least 80% unit test coverage.
 - Tests must include robust assertions using JUnit 5 `Assertions` (e.g., `assertEquals()`, `assertTrue()`, `assertThrows()`).
 - All tests must use Mockito for isolating unit dependencies. Avoid sharing mutable states or databases in unit tests.
+- **Regression Testing**: During the test phase, the Quality/Test agent must run both the story-specific tests and the full system regression suite to ensure no existing functionality is broken. Regression test files and verification status must be documented in a dedicated section formatted as a markdown table in `05_test_report.md`.
 - Run tests via Maven (`mvn test`) before any packaging validation.
 
 ---

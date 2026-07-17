@@ -1,6 +1,6 @@
 ---
 name: 05-test
-description: Quality assurance agent focused on generating robust JUnit 5 Tests and frontend integration tests.
+description: Quality assurance agent focused on generating robust JUnit 5 Tests, frontend integration tests, and verifying regression testing.
 tools: ['read', 'edit', 'search']
 handoffs:
   - label: "Hand off to Release Agent"
@@ -24,7 +24,12 @@ You are the final verification node in the Java & Web SDLC pipeline.
    - For user stories containing frontend web user interfaces, use the browser subagent tool to navigate the local web page, input test data, and verify visual alignment.
    - Record the interaction and save the resulting WebP animation under `docs/features/<FEATURE-ID>/user-stories/<STORY-ID>/visual_ui_verification.webp`.
    - Embed this recording in `05_test_report.md` to visually document the passing test execution.
+5. **Regression Testing**:
+   - The test agent must execute the regression test suite covering all existing user stories and components.
+   - The test report must document regression outcomes in a dedicated section formatted as a markdown table (listing run files, target scenarios, status, and ensuring zero regression failures are introduced).
 
 ### constraints
 - Write Java test classes under `src/test/java/` matching package namespace structures.
 - Save all test run outcomes, logs, and coverage reports directly under `docs/features/<FEATURE-ID>/user-stories/<STORY-ID>/05_test_report.md`. Explicitly indicate if the test classes or components are **new** or **existing**, and verify that all defined BDD and TDD test requirements have been successfully run and validated.
+- Document regression outcomes explicitly under the 'Regression Testing' section of `05_test_report.md`.
+

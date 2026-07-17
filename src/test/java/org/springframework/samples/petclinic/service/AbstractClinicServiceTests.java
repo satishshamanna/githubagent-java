@@ -1,0 +1,266 @@
+/*
+ * Version Number: 1.1.0
+ * User Story Number: US01
+ * Date & Time of Change: 2026-07-14T13:13:13+05:30
+ * User Name: Satish
+ * Brief Description of Change: Added integration tests for Invoice entity and repository methods.
+ */
+/*
+ * Copyright 2002-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springframework.samples.petclinic.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Collection;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.model.Visit;
+import org.springframework.samples.petclinic.model.Appointment;
+import org.springframework.samples.petclinic.model.Invoice;
+import org.springframework.samples.petclinic.util.EntityUtils;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * <p> Base class for {@link ClinicService} integration tests. </p> <p> Subclasses should specify Spring context
+ * configuration using {@link ContextConfiguration @ContextConfiguration} annotation </p> <p>
+ * AbstractclinicServiceTests and its subclasses benefit from the following services provided by the Spring
+ * TestContext Framework: </p> <ul> <li><strong>Spring IoC container caching</strong> which spares us unnecessary set up
+ * time between test execution.</li> <li><strong>Dependency Injection</strong> of test fixture instances, meaning that
+ * we don't need to perform application context lookups. See the use of {@link Autowired @Autowired} on the <code>{@link
+ * AbstractClinicServiceTests#clinicService clinicService}</code> instance variable, which uses autowiring <em>by
+ * type</em>. <li><strong>Transaction management</strong>, meaning each test method is executed in its own transaction,
+ * which is automatically rolled back by default. Thus, even if tests insert or otherwise change database state, there
+ * is no need for a teardown or cleanup script. <li> An {@link org.springframework.context.ApplicationContext
+ * ApplicationContext} is also inherited and can be used for explicit bean lookup if necessary. </li> </ul>
+ *
+ * @author Ken Krebs
+ * @author Rod Johnson
+ * @author Juergen Hoeller
+ * @author Sam Brannen
+ * @author Michael Isvy
+ */
+abstract class AbstractClinicServiceTests {
+
+    @Autowired
+    protected ClinicService clinicService;
+
+    @Test
+    void shouldFindOwnersByLastName() {
+        Collection<Owner> owners = this.clinicService.findOwnerByLastName("Davis");
+        assertThat(owners).hasSize(2);
+
+        owners = this.clinicService.findOwnerByLastName("Daviss");
+        assertThat(owners).isEmpty();
+    }
+
+    @Test
+    void shouldFindSingleOwnerWithPet() {
+        Owner owner = this.clinicService.findOwnerById(1);
+        assertThat(owner.getLastName()).startsWith("Franklin");
+        assertThat(owner.getPets()).hasSize(1);
+        assertThat(owner.getPets().get(0).getType()).isNotNull();
+        assertThat(owner.getPets().get(0).getType().getName()).isEqualTo("cat");
+    }
+
+    @Test
+    @Transactional
+    public void shouldInsertOwner() {
+        Collection<Owner> owners = this.clinicService.findOwnerByLastName("Schultz");
+        int found = owners.size();
+
+        Owner owner = new Owner();
+        owner.setFirstName("Sam");
+        owner.setLastName("Schultz");
+        owner.setAddress("4, Evans Street");
+        owner.setCity("Wollongong");
+        owner.setTelephone("4444444444");
+        this.clinicService.saveOwner(owner);
+        assertThat(owner.getId().longValue()).isNotZero();
+
+        owners = this.clinicService.findOwnerByLastName("Schultz");
+        assertThat(owners).hasSize(found + 1);
+    }
+
+    @Test
+    @Transactional
+    void shouldUpdateOwner() {
+        Owner owner = this.clinicService.findOwnerById(1);
+        String oldLastName = owner.getLastName();
+        String newLastName = oldLastName + "X";
+
+        owner.setLastName(newLastName);
+        this.clinicService.saveOwner(owner);
+
+        // retrieving new name from database
+        owner = this.clinicService.findOwnerById(1);
+        assertThat(owner.getLastName()).isEqualTo(newLastName);
+    }
+
+    @Test
+    void shouldFindPetWithCorrectId() {
+        Pet pet7 = this.clinicService.findPetById(7);
+        assertThat(pet7.getName()).startsWith("Samantha");
+        assertThat(pet7.getOwner().getFirstName()).isEqualTo("Jean");
+
+    }
+
+    @Test
+    void shouldFindAllPetTypes() {
+        Collection<PetType> petTypes = this.clinicService.findPetTypes();
+
+        PetType petType1 = EntityUtils.getById(petTypes, PetType.class, 1);
+        assertThat(petType1.getName()).isEqualTo("cat");
+        PetType petType4 = EntityUtils.getById(petTypes, PetType.class, 4);
+        assertThat(petType4.getName()).isEqualTo("snake");
+    }
+
+    @Test
+    @Transactional
+    public void shouldInsertPetIntoDatabaseAndGenerateId() {
+        Owner owner6 = this.clinicService.findOwnerById(6);
+        int found = owner6.getPets().size();
+
+        Pet pet = new Pet();
+        pet.setName("bowser");
+        Collection<PetType> types = this.clinicService.findPetTypes();
+        pet.setType(EntityUtils.getById(types, PetType.class, 2));
+        pet.setBirthDate(LocalDate.now());
+        owner6.addPet(pet);
+        assertThat(owner6.getPets()).hasSize(found + 1);
+
+        this.clinicService.savePet(pet);
+        this.clinicService.saveOwner(owner6);
+
+        owner6 = this.clinicService.findOwnerById(6);
+        assertThat(owner6.getPets()).hasSize(found + 1);
+        // checks that id has been generated
+        assertThat(pet.getId()).isNotNull();
+    }
+
+    @Test
+    @Transactional
+    public void shouldUpdatePetName() throws Exception {
+        Pet pet7 = this.clinicService.findPetById(7);
+        String oldName = pet7.getName();
+
+        String newName = oldName + "X";
+        pet7.setName(newName);
+        this.clinicService.savePet(pet7);
+
+        pet7 = this.clinicService.findPetById(7);
+        assertThat(pet7.getName()).isEqualTo(newName);
+    }
+
+    @Test
+    void shouldFindVets() {
+        Collection<Vet> vets = this.clinicService.findVets();
+
+        Vet vet = EntityUtils.getById(vets, Vet.class, 3);
+        assertThat(vet.getLastName()).isEqualTo("Douglas");
+        assertThat(vet.getNrOfSpecialties()).isEqualTo(2);
+        assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("dentistry");
+        assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("surgery");
+    }
+
+    @Test
+    @Transactional
+    public void shouldAddNewVisitForPet() {
+        Pet pet7 = this.clinicService.findPetById(7);
+        int found = pet7.getVisits().size();
+        Visit visit = new Visit();
+        pet7.addVisit(visit);
+        visit.setDescription("test");
+        this.clinicService.saveVisit(visit);
+        this.clinicService.savePet(pet7);
+
+        pet7 = this.clinicService.findPetById(7);
+        assertThat(pet7.getVisits()).hasSize(found + 1);
+        assertThat(visit.getId()).isNotNull();
+    }
+
+    @Test
+    void shouldFindVisitsByPetId() throws Exception {
+        Collection<Visit> visits = this.clinicService.findVisitsByPetId(7);
+        assertThat(visits).hasSize(2);
+        Visit[] visitArr = visits.toArray(new Visit[visits.size()]);
+        assertThat(visitArr[0].getPet()).isNotNull();
+        assertThat(visitArr[0].getDate()).isNotNull();
+        assertThat(visitArr[0].getPet().getId()).isEqualTo(7);
+    }
+
+    @Test
+    @Transactional
+    public void shouldInsertAndFindAppointment() {
+        Pet pet = this.clinicService.findPetById(1);
+        Vet vet = this.clinicService.findVets().iterator().next();
+        
+        int foundByPet = this.clinicService.findAppointmentsByPetId(1).size();
+        
+        Appointment appt = new Appointment();
+        appt.setDate(LocalDate.of(2026, 8, 15));
+        appt.setTimeSlot("10:00");
+        appt.setDescription("Routine checkup");
+        appt.setPet(pet);
+        appt.setVet(vet);
+        
+        this.clinicService.saveAppointment(appt);
+        assertThat(appt.getId()).isNotNull();
+        
+        Collection<Appointment> apptsByPet = this.clinicService.findAppointmentsByPetId(1);
+        assertThat(apptsByPet).hasSize(foundByPet + 1);
+        
+        Collection<Appointment> apptsByVet = this.clinicService.findAppointmentsByVetIdAndDate(vet.getId(), LocalDate.of(2026, 8, 15));
+        assertThat(apptsByVet).isNotEmpty();
+        assertThat(apptsByVet.iterator().next().getTimeSlot()).isEqualTo("10:00");
+    }
+
+    @Test
+    @Transactional
+    public void shouldInsertAndFindInvoice() {
+        Owner owner = this.clinicService.findOwnerById(1);
+        int initialInvoicesCount = this.clinicService.findAllInvoices().size();
+
+        Invoice invoice = new Invoice();
+        invoice.setOwner(owner);
+        invoice.setAmount(new BigDecimal("99.99"));
+        invoice.setIssueDate(LocalDate.now());
+        invoice.setDueDate(LocalDate.now().plusDays(15));
+        invoice.setDescription("Routine test invoice");
+        invoice.setPaymentStatus("UNPAID");
+
+        this.clinicService.saveInvoice(invoice);
+        assertThat(invoice.getId()).isNotNull();
+
+        Collection<Invoice> allInvoices = this.clinicService.findAllInvoices();
+        assertThat(allInvoices).hasSize(initialInvoicesCount + 1);
+
+        Collection<Invoice> ownerInvoices = this.clinicService.findInvoicesByOwnerId(1);
+        assertThat(ownerInvoices).isNotEmpty();
+        
+        Invoice retrieved = this.clinicService.findInvoiceById(invoice.getId());
+        assertThat(retrieved).isNotNull();
+        assertThat(retrieved.getAmount()).isEqualByComparingTo("99.99");
+    }
+
+}

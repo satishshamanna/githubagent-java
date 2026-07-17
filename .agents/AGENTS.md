@@ -21,7 +21,7 @@ For any source code file changes or new source code file creations (e.g., Java, 
 - **Version Number**: `1.0.0` (or appropriate version increment)
 - **User Story Number**: `US01`
 - **Date & Time of Change**: `2026-07-13T07:57:32+05:30` (or actual change time)
-- **User Name**: `Satish`
+- **User Name**: The logged-in username of the session executing the Agent (retrieved dynamically via git config user.name or system username)
 - **Brief Description of Change**: A concise summary of changes made.
 
 # Code Review, Test, and Release Report Standards

@@ -63,8 +63,8 @@ The multi-agent system follows a streamlined execution chain where context passe
 * **Handoff**: Hands off to `@05-test`.
 
 ### Agent 5: `@05-test` (`.github/agents/05-test.agent.md`)
-* **Role**: Quality assurance agent generating robust JUnit 5 tests, Mockito mocks, and frontend integration test suites.
-* **Output**: JUnit test classes and suites (marked as new/existing) ensuring coverage of all Gherkin BDD scenarios and implementing TDD outlines.
+* **Role**: Quality assurance agent generating robust JUnit 5 tests, Mockito mocks, frontend integration test suites, and performing system regression testing.
+* **Output**: JUnit test classes and suites (marked as new/existing) ensuring coverage of all Gherkin BDD scenarios, implementing TDD outlines, and generating a test report documenting regression verification outcomes.
 * **Handoff**: Hands off to `@06-release`.
 
 ### Agent 6: `@06-release` (`.github/agents/06-release.agent.md`)
@@ -98,3 +98,26 @@ All agent-generated planning, design, and validation documentation must be store
 * **Continuous Documentation**: Global business flows and technical reference maps must be updated concurrently by agents:
   - **Functional Reference**: Kept up-to-date in `docs/functional/` folder (e.g., business rules, flow charts, user manuals).
   - **Technical Reference**: Kept up-to-date in `docs/technical/` folder (e.g., entity relationship diagrams, Java API endpoints, component specs, database schema scripts).
+
+---
+
+## 6. Product Specifications & Features
+
+### Feature F03: Clinic Billing & Invoicing
+* **Domain Entity**: `org.springframework.samples.petclinic.model.Invoice`
+* **Repository**: `org.springframework.samples.petclinic.repository.InvoiceRepository`
+* **Controllers**: `org.springframework.samples.petclinic.web.InvoiceController`
+* **DDL Table**: `invoices` (id, owner_id, visit_id, appointment_id, amount, issue_date, due_date, payment_status, payment_date, description)
+* **REST Endpoints**:
+  - `GET /owners/{ownerId}/invoices`
+  - `GET /owners/{ownerId}/invoices/{invoiceId}`
+  - `POST /owners/{ownerId}/invoices/{invoiceId}/pay`
+  - `GET /admin/invoices`
+  - `POST /admin/invoices/new`
+* **JSP Templates**:
+  - `invoices/invoiceList.jsp`
+  - `invoices/invoiceDetails.jsp`
+  - `invoices/paymentForm.jsp`
+  - `invoices/invoiceForm.jsp`
+* **Security & Architectural Constraints**: SQL injection prevention using parameterized queries, dynamic inputs sanitization for XSS prevention, double payment verification, and transactional context mapping.
+

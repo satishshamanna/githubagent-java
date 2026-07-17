@@ -16,6 +16,7 @@ This registry tracks the active APIs, schema mappings, and core packages in the 
   - `Vet`
   - `Visit`
   - `Appointment` ([F01 Design](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F01/01_feature_design.md))
+  - `Invoice` ([F03 Design](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F03/01_feature_design.md))
 
 ### 2. Repository Persistence Mappings
 * **Path**: `org.springframework.samples.petclinic.repository`
@@ -26,6 +27,7 @@ This registry tracks the active APIs, schema mappings, and core packages in the 
   - `VetRepository`
   - `VisitRepository`
   - `AppointmentRepository` ([F01 Design](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F01/01_feature_design.md))
+  - `InvoiceRepository` ([F03 Design](file:///d:/SatishAIProjects/12-GitHub_NonSalesforce/docs/features/F03/01_feature_design.md))
 
 ### 3. Controller API Layer
 * **Path**: `org.springframework.samples.petclinic.web`
@@ -36,3 +38,7 @@ This registry tracks the active APIs, schema mappings, and core packages in the 
   - `GET /owners/{ownerId}/pets/new`, `POST /owners/{ownerId}/pets/new` (Pet creation)
   - `GET /owners/{ownerId}/pets/{petId}/visits/new`, `POST /owners/{ownerId}/pets/{petId}/visits/new` (Visit logging)
   - `GET /owners/{ownerId}/pets/{petId}/appointments/new`, `POST /owners/{ownerId}/pets/{petId}/appointments/new` (F01 Appointment Scheduling)
+  - `GET /owners/{ownerId}/invoices`, `GET /owners/{ownerId}/invoices/{invoiceId}` (F03 Billing list/details)
+  - `GET /owners/{ownerId}/invoices/{invoiceId}/pay`, `POST /owners/{ownerId}/invoices/{invoiceId}/pay` (F03 Payment flow)
+  - `GET /admin/invoices`, `POST /admin/invoices/new` (F03 Receptionist dashboard/creation)
+
